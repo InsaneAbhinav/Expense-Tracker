@@ -1,10 +1,12 @@
 package ui;
-
+import service.ExpenseService;
 import java.util.Scanner;
 
 public class Menu {
 
     private Scanner scan;
+    private ExpenseService expenseService = new ExpenseService();
+
 
     public Menu() {
         this.scan = new Scanner(System.in);
@@ -25,10 +27,37 @@ public class Menu {
 
                 switch (choice) {
                     case 1:
-                        System.out.println("You chose add expenses");
+                        System.out.print("Enter amount: ");
+
+                        if (!scan.hasNextDouble()) {
+                            System.out.println("Invalid amount. Please enter a number.");
+                            scan.next(); // clear invalid input
+                            break;
+                        }
+
+                        double amount = scan.nextDouble();
+                        scan.nextLine(); // clear newline
+
+                        System.out.print("Enter category: ");
+                        String category = scan.nextLine();
+
+                        expenseService.addExpense(amount, category);
+
+                        System.out.println("Expense added successfully!");
                         break;
                     case 2:
-                        System.out.println("You chose view expenses");
+                        if (expenseService.isEmpty()) {
+                            System.out.println("No expenses added yet.");
+                        } else {
+                            System.out.println("\n--- Expenses ---");
+                            for (var expense : expenseService.getAllExpenses()) {
+                                System.out.println(
+                                        "Category: " + expense.getCategory() +
+                                                " | Amount: " + expense.getAmount()
+                                );
+                            }
+                            System.out.println("----------------");
+                        }
                         break;
                     case 3:
                         System.out.println("Thank you!!");
